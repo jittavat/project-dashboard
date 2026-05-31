@@ -53,7 +53,7 @@ Single Actix-web binary. Key files:
 - `config.rs` — `Settings::from_env()` reads all env vars; passed as `web::Data<Settings>` to handlers
 - `routes.rs` — all route registrations + utoipa OpenAPI spec (Swagger UI at `/swagger-ui/`)
 - `middleware/auth.rs` — `CurrentUser` implements `FromRequest`; handlers that require auth declare it as a parameter
-- `handlers/{auth,projects,tickets}.rs` — request handlers; use `sqlx::query_as!()` compile-time checked macros
+- `handlers/{auth,projects,tickets,epics}.rs` — request handlers; use `sqlx::query_as!()` compile-time checked macros
 - `errors.rs` — `AppError` enum implements `ResponseError`; all handlers return `Result<HttpResponse, AppError>`
 - `migrations/` — run in order on startup; define postgres enums `ticket_status` and `ticket_priority`
 
@@ -75,11 +75,14 @@ For local `cargo build` (outside Docker), set `DATABASE_URL` in `backend/.env` a
 
 Vue 3 Composition API SPA with code-split lazy-loaded routes.
 
-- `api/` — axios client in `index.ts` (JWT interceptor, 401 redirect, **`camelizeKeys` response interceptor** that auto-converts all snake_case response keys to camelCase); `auth.ts`, `projects.ts`, `tickets.ts` call the API
+- `api/` — axios client in `index.ts` (JWT interceptor, 401 redirect, **`camelizeKeys` response interceptor** that auto-converts all snake_case response keys to camelCase); `auth.ts`, `projects.ts`, `tickets.ts`, `epics.ts` call the API
 - `stores/` — Pinia stores (Composition API style). Auth store holds `jwt` ref; `initialize()` must be called on app mount to restore from localStorage
 - `router/index.ts` — all routes under `/` wrap `AppLayout`; `beforeEach` guard redirects unauthenticated users to `/login`
 - `components/layout/` — `AppLayout` is the authenticated shell wrapping all protected views
+- `components/ui/` — `BaseButton`, `BaseInput`, `BaseModal`, `ConfirmModal` (Promise-based custom confirm dialog, replaces `window.confirm`)
+- `composables/` — `useConfirm` (singleton Promise-based modal state), `useEpicDateGuard` (checks ticket dates against epic boundaries, prompts to extend), `useToast`, `useAuth`
 - `views/ProjectDetailView.vue` — kanban board; tickets grouped by `status` across 5 columns
+- `views/EpicsView.vue` — epic list for a project; route `/projects/:projectId/epics`
 - `views/TimelineView.vue` — pure-SVG Gantt chart; route `/projects/:projectId/timeline`; three modes: By Ticket (bars labeled by assignee), By Assignee (y-axis = assignees, bars labeled by task title), By Epic. Calendar x-axis: month band row + 7-day tick row. Bars span `startDate || createdAt` → `finishedDate || today`. Hover tooltip via `<Teleport to="body">`. No external charting library.
 - `vitest.config.ts` — separate from `vite.config.ts`; uses `mergeConfig` to inherit vite config (required because vitest 4.x bundles its own vite copy)
 - `tsconfig.json` — includes `"ignoreDeprecations": "6.0"` required by TypeScript 6 (`baseUrl` is deprecated but still needed for `@/` aliases)

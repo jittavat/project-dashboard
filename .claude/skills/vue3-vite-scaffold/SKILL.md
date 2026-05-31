@@ -17,7 +17,7 @@ Add a new feature to the Vue 3 frontend (`frontend/src/`).
 | Router | Vue Router 4 — lazy-loaded views |
 | HTTP | Axios with JWT + 401 interceptors in `src/api/index.ts` |
 | Styles | Tailwind CSS 3 |
-| Tests | Vitest 2 + `@vue/test-utils` + jsdom |
+| Tests | Vitest 4 + `@vue/test-utils` + jsdom |
 | Types | TypeScript strict mode |
 
 ## New view checklist
