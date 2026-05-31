@@ -4,6 +4,7 @@
   import { useTicketsStore } from '@/stores/tickets'
   import { useEpicsStore } from '@/stores/epics'
   import { useEpicDateGuard } from '@/composables/useEpicDateGuard'
+  import { useConfirm } from '@/composables/useConfirm'
   import BaseButton from '@/components/ui/BaseButton.vue'
   import BaseInput from '@/components/ui/BaseInput.vue'
   import BaseModal from '@/components/ui/BaseModal.vue'
@@ -16,6 +17,7 @@
   const store = useTicketsStore()
   const epicStore = useEpicsStore()
   const { checkCreatedTicket } = useEpicDateGuard(projectId, store, epicStore)
+  const { confirm } = useConfirm()
 
   // --- Ticket modal ---
   const showModal = ref(false)
@@ -118,7 +120,13 @@
   }
 
   async function handleDeleteEpic(epicId: string) {
-    if (!window.confirm('Delete this epic? Tickets will be unassigned.')) return
+    const ok = await confirm({
+      title: 'Delete epic',
+      message: 'All tickets assigned to this epic will be unassigned. This cannot be undone.',
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    })
+    if (!ok) return
     await epicStore.deleteEpic(projectId, epicId)
   }
 

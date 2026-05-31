@@ -4,6 +4,7 @@
   import { useTicketsStore } from '@/stores/tickets'
   import { useEpicsStore } from '@/stores/epics'
   import { useEpicDateGuard } from '@/composables/useEpicDateGuard'
+  import { useConfirm } from '@/composables/useConfirm'
   import type { TicketStatus, TicketPriority } from '@/types'
 
   const route = useRoute()
@@ -14,6 +15,7 @@
   const store = useTicketsStore()
   const epicStore = useEpicsStore()
   const { checkFinishedDate, checkStartDate } = useEpicDateGuard(projectId, store, epicStore)
+  const { confirm } = useConfirm()
 
   onMounted(() => {
     store.fetchTicket(projectId, ticketId)
@@ -95,7 +97,13 @@
   }
 
   async function handleDelete() {
-    if (!window.confirm('Delete this ticket? This cannot be undone.')) return
+    const ok = await confirm({
+      title: 'Delete ticket',
+      message: 'This ticket will be permanently deleted. This cannot be undone.',
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    })
+    if (!ok) return
     await store.deleteTicket(projectId, ticketId)
     router.push(`/projects/${projectId}`)
   }

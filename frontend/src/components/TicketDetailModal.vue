@@ -3,6 +3,7 @@
   import { useTicketsStore } from '@/stores/tickets'
   import { useEpicsStore } from '@/stores/epics'
   import { useEpicDateGuard } from '@/composables/useEpicDateGuard'
+  import { useConfirm } from '@/composables/useConfirm'
   import type { TicketStatus, TicketPriority } from '@/types'
 
   const props = defineProps<{ ticketId: string; projectId: string; show: boolean }>()
@@ -11,6 +12,7 @@
   const store = useTicketsStore()
   const epicStore = useEpicsStore()
   const { checkFinishedDate, checkStartDate } = useEpicDateGuard(props.projectId, store, epicStore)
+  const { confirm } = useConfirm()
   const loading = ref(false)
 
   const title = ref('')
@@ -99,7 +101,13 @@
   }
 
   async function handleDelete() {
-    if (!window.confirm('Delete this ticket? This cannot be undone.')) return
+    const ok = await confirm({
+      title: 'Delete ticket',
+      message: 'This ticket will be permanently deleted. This cannot be undone.',
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    })
+    if (!ok) return
     await store.deleteTicket(props.projectId, props.ticketId)
     emit('deleted')
   }

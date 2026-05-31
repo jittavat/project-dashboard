@@ -1,12 +1,14 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue'
   import { useEpicsStore } from '@/stores/epics'
+  import { useConfirm } from '@/composables/useConfirm'
   import type { TicketStatus, TicketPriority } from '@/types'
 
   const props = defineProps<{ epicId: string; projectId: string; show: boolean }>()
   const emit = defineEmits<{ close: []; deleted: [] }>()
 
   const store = useEpicsStore()
+  const { confirm } = useConfirm()
   const loading = ref(false)
 
   const title = ref('')
@@ -78,7 +80,13 @@
   }
 
   async function handleDelete() {
-    if (!window.confirm('Delete this epic? Tickets assigned to it will be unassigned. This cannot be undone.')) return
+    const ok = await confirm({
+      title: 'Delete epic',
+      message: 'All tickets assigned to this epic will be unassigned. This cannot be undone.',
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    })
+    if (!ok) return
     await store.deleteEpic(props.projectId, props.epicId)
     emit('deleted')
   }

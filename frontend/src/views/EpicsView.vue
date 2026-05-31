@@ -5,6 +5,7 @@
   import { useTicketsStore } from '@/stores/tickets'
   import EpicDetailModal from '@/components/EpicDetailModal.vue'
   import BaseModal from '@/components/ui/BaseModal.vue'
+  import { useConfirm } from '@/composables/useConfirm'
   import type { TicketPriority, TicketStatus } from '@/types'
 
   const route = useRoute()
@@ -12,6 +13,7 @@
 
   const epicStore = useEpicsStore()
   const ticketStore = useTicketsStore()
+  const { confirm } = useConfirm()
 
   onMounted(async () => {
     await Promise.all([epicStore.fetchEpics(projectId), ticketStore.fetchTickets(projectId)])
@@ -68,7 +70,13 @@
   }
 
   async function handleDelete(epicId: string) {
-    if (!window.confirm('Delete this epic? Tickets assigned to it will be unassigned. This cannot be undone.')) return
+    const ok = await confirm({
+      title: 'Delete epic',
+      message: 'All tickets assigned to this epic will be unassigned. This cannot be undone.',
+      confirmLabel: 'Delete',
+      variant: 'danger',
+    })
+    if (!ok) return
     await epicStore.deleteEpic(projectId, epicId)
   }
 
