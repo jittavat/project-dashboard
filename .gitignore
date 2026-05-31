@@ -1,0 +1,27 @@
+# Env
+.env
+*.env.local
+
+# Rust
+backend/target/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+node_modules/
+
+# Coverage
+backend/tarpaulin-report.html
+frontend/coverage/
+
+# SQLx offline query cache — commit this to enable offline builds
+# backend/.sqlx/
+
+# Graphify knowledge graph output (generated)
+graphify-out/
+
+# Claude Code local project settings
+.claude/
+
+# OS
+.DS_Store

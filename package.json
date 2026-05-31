@@ -1,0 +1,18 @@
+{
+  "name": "project-dashboard",
+  "version": "1.0.0",
+  "description": "Jira-like project dashboard – root scripts delegating to frontend",
+  "private": true,
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm run test",
+    "coverage": "cd frontend && npm run coverage",
+    "lint": "cd frontend && npm run lint",
+    "preview": "cd frontend && npm run preview"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

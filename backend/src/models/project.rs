@@ -1,0 +1,29 @@
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
+use uuid::Uuid;
+
+#[derive(Debug, Clone, Serialize, Deserialize, ToSchema, sqlx::FromRow)]
+pub struct Project {
+    pub id: Uuid,
+    pub name: String,
+    pub key: String,
+    pub description: Option<String>,
+    pub owner_id: Uuid,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+}
+
+#[derive(Debug, Deserialize, ToSchema)]
+pub struct CreateProjectRequest {
+    pub name: String,
+    /// Short uppercase identifier, e.g. "DASH"
+    pub key: String,
+    pub description: Option<String>,
+}
+
+#[derive(Debug, Deserialize, ToSchema)]
+pub struct UpdateProjectRequest {
+    pub name: Option<String>,
+    pub description: Option<String>,
+}

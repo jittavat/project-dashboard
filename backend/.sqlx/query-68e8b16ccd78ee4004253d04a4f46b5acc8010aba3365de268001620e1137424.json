@@ -1,0 +1,167 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE tickets\n           SET title         = COALESCE($3, title),\n               description   = COALESCE($4, description),\n               status        = COALESCE($5, status),\n               priority      = COALESCE($6, priority),\n               assignee_id   = COALESCE($7, assignee_id),\n               finished_date = COALESCE($8, finished_date),\n               start_date    = COALESCE($9, start_date),\n               assignee      = COALESCE($10, assignee),\n               tags          = COALESCE($11, tags),\n               epic_id       = COALESCE($12, epic_id),\n               updated_at    = NOW()\n           WHERE id = $1 AND project_id = $2\n           RETURNING id, project_id, title, description,\n                     status AS \"status: _\", priority AS \"priority: _\",\n                     assignee_id, reporter_id, created_at, updated_at,\n                     finished_date, start_date, assignee, tags, epic_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "project_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "status: _",
+        "type_info": {
+          "Custom": {
+            "name": "ticket_status",
+            "kind": {
+              "Enum": [
+                "backlog",
+                "todo",
+                "in_progress",
+                "in_review",
+                "done"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "priority: _",
+        "type_info": {
+          "Custom": {
+            "name": "ticket_priority",
+            "kind": {
+              "Enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "assignee_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 7,
+        "name": "reporter_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
+        "name": "finished_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 11,
+        "name": "start_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 12,
+        "name": "assignee",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 13,
+        "name": "tags",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 14,
+        "name": "epic_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Text",
+        "Text",
+        {
+          "Custom": {
+            "name": "ticket_status",
+            "kind": {
+              "Enum": [
+                "backlog",
+                "todo",
+                "in_progress",
+                "in_review",
+                "done"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "ticket_priority",
+            "kind": {
+              "Enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            }
+          }
+        },
+        "Uuid",
+        "Timestamptz",
+        "Timestamptz",
+        "Text",
+        "TextArray",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "68e8b16ccd78ee4004253d04a4f46b5acc8010aba3365de268001620e1137424"
+}

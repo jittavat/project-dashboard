@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM epics WHERE id = $1 AND project_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "69f29b158a82cf246289af42bc873fc0048f2925f54636dfddcfb9d599dc4fd5"
+}

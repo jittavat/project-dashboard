@@ -1,0 +1,10 @@
+# .graphifyignore — skip build artefacts and dependencies
+frontend/node_modules/
+frontend/dist/
+frontend/coverage/
+backend/target/
+backend/.sqlx/
+graphify-out/
+.git/
+*.lock
+*.generated.*

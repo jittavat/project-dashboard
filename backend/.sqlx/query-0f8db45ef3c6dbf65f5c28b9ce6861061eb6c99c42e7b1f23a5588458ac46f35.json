@@ -1,0 +1,131 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id, project_id, title, description,\n                  status AS \"status: _\", priority AS \"priority: _\",\n                  assignee_id, reporter_id, created_at, updated_at,\n                  finished_date, start_date, assignee, tags, epic_id\n           FROM tickets\n           WHERE project_id = $1\n           ORDER BY created_at DESC",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "project_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "status: _",
+        "type_info": {
+          "Custom": {
+            "name": "ticket_status",
+            "kind": {
+              "Enum": [
+                "backlog",
+                "todo",
+                "in_progress",
+                "in_review",
+                "done"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "priority: _",
+        "type_info": {
+          "Custom": {
+            "name": "ticket_priority",
+            "kind": {
+              "Enum": [
+                "low",
+                "medium",
+                "high",
+                "critical"
+              ]
+            }
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "assignee_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 7,
+        "name": "reporter_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 8,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 9,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 10,
+        "name": "finished_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 11,
+        "name": "start_date",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 12,
+        "name": "assignee",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 13,
+        "name": "tags",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 14,
+        "name": "epic_id",
+        "type_info": "Uuid"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      true
+    ]
+  },
+  "hash": "0f8db45ef3c6dbf65f5c28b9ce6861061eb6c99c42e7b1f23a5588458ac46f35"
+}

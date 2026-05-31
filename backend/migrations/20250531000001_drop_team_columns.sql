@@ -1,0 +1,2 @@
+ALTER TABLE tickets DROP COLUMN team;
+ALTER TABLE epics   DROP COLUMN team;
