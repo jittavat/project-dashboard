@@ -62,6 +62,11 @@
   }
 
   const today = new Date()
+  const todayMs = today.getTime()
+
+  function isOverdue(item: { finishedDate?: string | null; status: string }): boolean {
+    return !!item.finishedDate && new Date(item.finishedDate).getTime() < todayMs && item.status !== 'done'
+  }
 
   function effectiveStart(t: Ticket): string {
     return t.startDate || t.createdAt || new Date().toISOString()
@@ -409,12 +414,13 @@
           <rect x="0" :y="row.y" :width="svgWidth" :height="ROW_H" fill="transparent" />
           <line x1="0" :y1="row.y" :x2="svgWidth" :y2="row.y" stroke="#f3f4f6" stroke-width="1" />
           <text x="8" :y="row.y + ROW_H / 2 + 4" font-size="12" fill="#374151" class="select-none">{{ row.rowLabel }}</text>
+          <circle v-if="isOverdue(row.ticket)" :cx="LABEL_W - 10" :cy="row.y + ROW_H / 2" r="4" fill="#ef4444" />
           <defs>
             <clipPath :id="`clip-t-${row.ticket.id}`">
               <rect :x="row.x" :y="row.y + 6" :width="row.w" :height="ROW_H - 12" rx="4" />
             </clipPath>
           </defs>
-          <rect :x="row.x" :y="row.y + 6" :width="row.w" :height="ROW_H - 12" :fill="row.color" rx="4" opacity="0.85" />
+          <rect :x="row.x" :y="row.y + 6" :width="row.w" :height="ROW_H - 12" :fill="row.color" rx="4" opacity="0.85" :stroke="isOverdue(row.ticket) ? '#ef4444' : 'none'" stroke-width="1.5" />
           <text :x="row.x + 6" :y="row.y + ROW_H / 2 + 4" font-size="11" fill="white" :clip-path="`url(#clip-t-${row.ticket.id})`" class="select-none pointer-events-none">{{ fitLabel(row.barText, row.w) }}</text>
         </g>
       </svg>
@@ -443,12 +449,13 @@
              class="cursor-pointer"
           >
             <line v-if="ti > 0" x1="0" :y1="row.y + ti * ROW_H" :x2="svgWidth" :y2="row.y + ti * ROW_H" stroke="#f9fafb" stroke-width="1" />
+            <circle v-if="isOverdue(ticket)" :cx="LABEL_W - 10" :cy="row.y + ti * ROW_H + ROW_H / 2" r="4" fill="#ef4444" />
             <defs>
               <clipPath :id="`clip-tm-${ticket.id}`">
                 <rect :x="ticketBarX(ticket)" :y="row.y + ti * ROW_H + 6" :width="ticketBarW(ticket)" :height="ROW_H - 12" rx="4" />
               </clipPath>
             </defs>
-            <rect :x="ticketBarX(ticket)" :y="row.y + ti * ROW_H + 6" :width="ticketBarW(ticket)" :height="ROW_H - 12" :fill="STATUS_COLORS[ticket.status]" rx="4" opacity="0.85" />
+            <rect :x="ticketBarX(ticket)" :y="row.y + ti * ROW_H + 6" :width="ticketBarW(ticket)" :height="ROW_H - 12" :fill="STATUS_COLORS[ticket.status]" rx="4" opacity="0.85" :stroke="isOverdue(ticket) ? '#ef4444' : 'none'" stroke-width="1.5" />
             <text :x="ticketBarX(ticket) + 6" :y="row.y + ti * ROW_H + ROW_H / 2 + 4" font-size="11" fill="white" :clip-path="`url(#clip-tm-${ticket.id})`" class="select-none pointer-events-none">{{ fitLabel(ticket.title, ticketBarW(ticket)) }}</text>
           </g>
         </g>
@@ -491,6 +498,7 @@
               :fill="g.epic ? '#4338ca' : '#9ca3af'"
               class="select-none"
             >{{ g.epic ? clip(g.epic.title, 22) : 'No Epic' }}</text>
+            <circle v-if="g.epic && isOverdue(g.epic)" :cx="LABEL_W - 10" :cy="epicRowPositions[gi].epicY + EPIC_ROW_H / 2" r="5" fill="#ef4444" />
             <!-- Ticket count badge -->
             <text
               x="22" :y="epicRowPositions[gi].epicY + EPIC_ROW_H / 2 + 18"
@@ -509,6 +517,7 @@
               :x="epicBarX(g)" :y="epicRowPositions[gi].epicY + 8"
               :width="epicBarW(g)" :height="EPIC_ROW_H - 16"
               fill="#6366f1" rx="5" opacity="0.9"
+              :stroke="isOverdue(g.epic!) ? '#ef4444' : 'none'" stroke-width="1.5"
             />
             <text
               :x="epicBarX(g) + 8" :y="epicRowPositions[gi].epicY + EPIC_ROW_H / 2 + 4"
@@ -549,6 +558,7 @@
                 :y="epicRowPositions[gi].epicY + EPIC_ROW_H + ti * ROW_H + ROW_H / 2 + 4"
                 font-size="11" fill="#6b7280" class="select-none"
               >{{ clip(ticket.title, 24) }}</text>
+              <circle v-if="isOverdue(ticket)" :cx="LABEL_W - 10" :cy="epicRowPositions[gi].epicY + EPIC_ROW_H + ti * ROW_H + ROW_H / 2" r="4" fill="#ef4444" />
               <defs>
                 <clipPath :id="`clip-ep-t-${ticket.id}`">
                   <rect
@@ -567,6 +577,7 @@
                 :height="ROW_H - 12"
                 :fill="STATUS_COLORS[ticket.status]"
                 rx="4" opacity="0.85"
+                :stroke="isOverdue(ticket) ? '#ef4444' : 'none'" stroke-width="1.5"
               />
               <text
                 :x="ticketBarX(ticket) + 6"
@@ -601,6 +612,10 @@
         <span class="flex items-center gap-1 ml-2">
           <svg width="20" height="12"><line x1="0" y1="6" x2="20" y2="6" stroke="#3b82f6" stroke-width="1" stroke-dasharray="4 3" /></svg>
           Today
+        </span>
+        <span class="flex items-center gap-1 ml-2 border-l pl-4">
+          <svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#ef4444"/></svg>
+          Overdue
         </span>
         <span v-if="viewMode !== 'epic'" class="ml-2 text-gray-400">· Click a bar to edit · By Ticket: label = assignee · By Assignee: label = task</span>
         <span v-else class="ml-2 text-gray-400">· Click ▼/▶ to expand/collapse · Click bar to edit</span>
@@ -656,6 +671,9 @@
         <div v-if="tooltip.ticket.finishedDate" class="flex justify-between">
           <dt class="text-gray-500">Finish</dt>
           <dd class="font-medium text-gray-800">{{ fmtDate(tooltip.ticket.finishedDate) }}</dd>
+        </div>
+        <div v-if="isOverdue(tooltip.ticket)" class="flex items-center gap-1 pt-1 border-t border-red-100">
+          <span class="font-medium text-red-600">⚠ Overdue</span>
         </div>
         <div v-if="tooltip.ticket.description" class="pt-1 border-t border-gray-100">
           <dt class="text-gray-500 mb-0.5">Description</dt>

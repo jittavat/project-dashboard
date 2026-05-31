@@ -18,6 +18,10 @@
   const epicStore = useEpicsStore()
   const { checkCreatedTicket } = useEpicDateGuard(projectId, store, epicStore)
   const { confirm } = useConfirm()
+  const todayMs = Date.now()
+  function isOverdue(ticket: { finishedDate?: string; status: string }) {
+    return !!ticket.finishedDate && new Date(ticket.finishedDate).getTime() < todayMs && ticket.status !== 'done'
+  }
 
   // --- Ticket modal ---
   const showModal = ref(false)
@@ -175,6 +179,9 @@
                 :class="['inline-block rounded px-2 py-0.5 text-xs font-medium', PRIORITY_COLOURS[ticket.priority]]"
               >{{ ticket.priority }}</span>
               <span v-if="ticket.assignee" class="text-xs text-gray-400">· {{ ticket.assignee }}</span>
+            </div>
+            <div v-if="isOverdue(ticket)" class="mt-1">
+              <span class="inline-flex items-center gap-0.5 rounded px-1.5 py-0.5 text-xs font-medium bg-red-100 text-red-600">⚠ Overdue</span>
             </div>
           </RouterLink>
         </div>
