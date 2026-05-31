@@ -80,7 +80,7 @@ Vue 3 Composition API SPA with code-split lazy-loaded routes.
 - `router/index.ts` — all routes under `/` wrap `AppLayout`; `beforeEach` guard redirects unauthenticated users to `/login`
 - `components/layout/` — `AppLayout` is the authenticated shell wrapping all protected views
 - `views/ProjectDetailView.vue` — kanban board; tickets grouped by `status` across 5 columns
-- `views/TimelineView.vue` — pure-SVG Gantt chart; route `/projects/:projectId/timeline`; two modes: By Ticket (y-axis = tickets, bars labeled with team name) and By Team (y-axis = teams, bars labeled with task title). Calendar x-axis: month band row + 7-day tick row. Bars span `startDate || createdAt` → `finishedDate || today`. Hover tooltip via `<Teleport to="body">`. No external charting library.
+- `views/TimelineView.vue` — pure-SVG Gantt chart; route `/projects/:projectId/timeline`; three modes: By Ticket (bars labeled by assignee), By Assignee (y-axis = assignees, bars labeled by task title), By Epic. Calendar x-axis: month band row + 7-day tick row. Bars span `startDate || createdAt` → `finishedDate || today`. Hover tooltip via `<Teleport to="body">`. No external charting library.
 - `vitest.config.ts` — separate from `vite.config.ts`; uses `mergeConfig` to inherit vite config (required because vitest 4.x bundles its own vite copy)
 - `tsconfig.json` — includes `"ignoreDeprecations": "6.0"` required by TypeScript 6 (`baseUrl` is deprecated but still needed for `@/` aliases)
 
@@ -112,3 +112,24 @@ Rules:
 - If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
 - Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
 - After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+
+## Skills
+
+Project-specific skills in `.claude/skills/`. Invoke with `/project:update-project --skills` to regenerate after code changes.
+
+| Trigger | Description |
+| ------- | ----------- |
+| `/sqlx-workflow` | SQLx compile-time queries, migrations, offline cache, and error diagnosis |
+| `/rust-actix-scaffold` | Scaffold a new handler, route, or model in the Rust backend |
+| `/vue3-vite-scaffold` | Add a new view, Pinia store, or API module to the Vue frontend |
+| `/docker-fullstack` | Run the full stack with Docker Compose, env-var overrides, postgres healthcheck |
+| `/vitest-vite-split` | Why `vitest.config.ts` is separate from `vite.config.ts` and how to write tests |
+
+## Project commands
+
+| Command | What it does |
+| ------- | ------------ |
+| `/project:update-project` | Re-read the codebase and update `CLAUDE.md` |
+| `/project:update-project --skills` | Update `CLAUDE.md` and all `.claude/skills/` files |
+| `/project:update-project --skills-only` | Update skill files only |
+| `/project:update-project --skill <name>` | Rewrite a single skill (e.g. `--skill sqlx-workflow`) |
